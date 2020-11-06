@@ -1,9 +1,11 @@
 {
-    "name": "Template",
-    "description": "This is a \\compose\\ template package.",
+    "name": "Duckietown - Duckiedrone",
+    "description": "Provides functionalities for monitoring Duckiebots",
     "dependencies": {
         "system-packages": [],
-        "packages": []
+        "packages": [
+            "ros"
+        ]
     },
     "compatibility": {
         "compose": {
