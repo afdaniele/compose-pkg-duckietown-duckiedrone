@@ -41,16 +41,8 @@ class Duckiedrone_Heartbeat extends BlockRenderer {
     protected static function render($id, &$args) {
         ?>
         <div id="block_content">
-
-            <table style="width: 100%">
-                <tr>
-                    <td style="width: 100%">
-                        <img style="width: 100%"
-                             src="<?php echo Core::getImageURL('heartbeat.gif', 'duckietown_duckiedrone') ?>">
-                    </td>
-                </tr>
-            </table>
-
+            <img class="resizable" style="height: 100%"
+                 src="<?php echo Core::getImageURL('heartbeat.gif', 'duckietown_duckiedrone') ?>">
         </div>
         
         <?php
@@ -77,7 +69,6 @@ class Duckiedrone_Heartbeat extends BlockRenderer {
                     topic.publish(msg);
                 }, 1000 * (1.0 / <?php echo $args['frequency'] ?>))
             });
-
         </script>
         
         <?php
