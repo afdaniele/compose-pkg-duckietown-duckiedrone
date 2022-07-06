@@ -1,0 +1,6 @@
+#!/bin/bash
+
+DUCKIETOWN_DUCKIEDRONE_PKG_DIR=$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)
+
+# exec post_update
+$DUCKIETOWN_DUCKIEDRONE_PKG_DIR/post_update

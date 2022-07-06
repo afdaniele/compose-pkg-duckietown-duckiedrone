@@ -1,0 +1,12 @@
+{
+	"_data": {
+		"auth": {
+			"type": "public",
+			"owner": null,
+			"grant": [
+			]
+		}
+	},
+	"_metadata": [
+	]
+}

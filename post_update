@@ -1,0 +1,10 @@
+#!/bin/bash
+
+DB_PACKAGE_NAME=data
+USERDATA_DIR=${COMPOSE_USERDATA_DIR:-/var/www/html/public_html/system/user-data}
+DATABASES_DIR=${USERDATA_DIR}/databases/${DB_PACKAGE_NAME}
+DUCKIETOWN_DUCKIEDRONE_PKG_DIR=$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)
+
+# Install default missions
+mkdir -p ${DATABASES_DIR}
+cp -R ${DUCKIETOWN_DUCKIEDRONE_PKG_DIR}/data/private/default_missions/* ${DATABASES_DIR}/

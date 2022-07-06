@@ -1,0 +1,18 @@
+{
+	"_data": {
+		"draggable": 1,
+		"show_header": 1,
+		"show_icon": 1,
+		"show_menu": 1,
+		"show_size_selector": 1,
+		"show_properties": 1,
+		"show_dispose": 1,
+		"wide_mode": 0,
+		"resolution": "8",
+		"block_gutter": "10",
+		"block_border_thickness": "1",
+		"scale_factor": "1"
+	},
+	"_metadata": [
+	]
+}
