@@ -1,144 +1,138 @@
 {
-    "blocks": [
-        {
-            "shape": {
-                "rows": "1",
-                "cols": "3"
+    "_data": {
+        "blocks": [
+            {
+                "shape": {
+                    "rows": 1,
+                    "cols": 3
+                },
+                "renderer": "Duckiedrone_Heartbeat",
+                "title": "Joystick Heartbeat",
+                "subtitle": "/joystick/heartbeat",
+                "args": {
+                    "ros_hostname": "",
+                    "topic": "~/joystick/heartbeat",
+                    "frequency": 5,
+                    "background_color": "#fff"
+                }
             },
-            "renderer": "Duckiedrone_Heartbeat",
-            "title": "Joystick Heartbeat",
-            "subtitle": "/joystick/heartbeat",
-            "args": {
-                "ros_hostname": "",
-                "topic": "~/joystick/heartbeat",
-                "frequency": "5",
-                "background_color": "#fff",
-                "token": "3g0rnbjMNMDod4n7"
-            }
-        },
-        {
-            "shape": {
-                "rows": "2",
-                "cols": "5"
+            {
+                "shape": {
+                    "rows": 2,
+                    "cols": 5
+                },
+                "renderer": "DuckietownMsgs_DroneMotorCommand",
+                "title": "Motors PWM",
+                "subtitle": "/flight_controller_node/motors",
+                "args": {
+                    "ros_hostname": "",
+                    "topic": "~/flight_controller_node/motors",
+                    "fps": 5,
+                    "min_value": 1000,
+                    "max_value": 2000
+                }
             },
-            "renderer": "DuckietownMsgs_DroneMotorCommand",
-            "title": "Motors PWM",
-            "subtitle": "/flight_controller_node/motors",
-            "args": {
-                "ros_hostname": "",
-                "topic": "~/flight_controller_node/motors",
-                "fps": "5",
-                "min_value": "1000",
-                "max_value": "2000",
-                "token": "3g0rnbjMNMDod4n7"
-            }
-        },
-        {
-            "shape": {
-                "rows": "1",
-                "cols": "3"
+            {
+                "shape": {
+                    "rows": 1,
+                    "cols": 3
+                },
+                "renderer": "Duckiedrone_Heartbeats_Monitor",
+                "title": "Heartbeats Monitor",
+                "subtitle": "/heartbeat/*",
+                "args": {
+                    "ros_hostname": "",
+                    "topic1": "~/joystick/heartbeat",
+                    "label1": "JOYSTICK",
+                    "topic2": "~/altitude_node/heartbeat",
+                    "label2": "ALTITUDE",
+                    "topic3": "~/state_estimator_node/heartbeat",
+                    "label3": "STATE",
+                    "topic4": "~/pid_controller_node/heartbeat",
+                    "label4": "PID",
+                    "threshold": 2,
+                    "frequency": 2,
+                    "background_color": "#fff"
+                }
             },
-            "renderer": "Duckiedrone_Heartbeats_Monitor",
-            "title": "Heartbeats Monitor",
-            "subtitle": "/heartbeat/*",
-            "args": {
-                "ros_hostname": "",
-                "topic1": "~/joystick/heartbeat",
-                "label1": "JOYSTICK",
-                "topic2": "~/altitude_node/heartbeat",
-                "label2": "ALTITUDE",
-                "topic3": "~/state_estimator_node/heartbeat",
-                "label3": "STATE",
-                "topic4": "~/pid_controller_node/heartbeat",
-                "label4": "PID",
-                "threshold": "2",
-                "frequency": "2",
-                "background_color": "#fff",
-                "token": "3g0rnbjMNMDod4n7"
-            }
-        },
-        {
-            "shape": {
-                "rows": "1",
-                "cols": "3"
+            {
+                "shape": {
+                    "rows": 1,
+                    "cols": 3
+                },
+                "renderer": "Duckiedrone_Arming",
+                "title": "Arm / Disarm",
+                "subtitle": "WARNING: This will activate the propellers",
+                "args": {
+                    "ros_hostname": "",
+                    "service": "~/flight_controller_node/set_mode",
+                    "topic": "~/flight_controller_node/mode/current",
+                    "frequency": 10,
+                    "background_color": "#fff"
+                }
             },
-            "renderer": "Duckiedrone_Arming",
-            "title": "Arm / Disarm",
-            "subtitle": "WARNING: This will activate the propellers",
-            "args": {
-                "ros_hostname": "",
-                "service": "~/flight_controller_node/set_mode",
-                "topic": "~/flight_controller_node/mode/current",
-                "frequency": "10",
-                "background_color": "#fff",
-                "token": "3g0rnbjMNMDod4n7"
-            }
-        },
-        {
-            "shape": {
-                "rows": "2",
-                "cols": "5"
+            {
+                "shape": {
+                    "rows": 2,
+                    "cols": 5
+                },
+                "renderer": "SensorMsgs_Range",
+                "title": "Altitude",
+                "subtitle": "/altitude_node/altitude",
+                "args": {
+                    "ros_hostname": "",
+                    "topic": "~/altitude_node/altitude",
+                    "label": "Altitude",
+                    "fps": 5,
+                    "rendering": "plot"
+                }
             },
-            "renderer": "SensorMsgs_Range",
-            "title": "Altitude",
-            "subtitle": "/altitude_node/altitude",
-            "args": {
-                "ros_hostname": "",
-                "topic": "~/altitude_node/altitude",
-                "label": "Altitude",
-                "fps": "5",
-                "rendering": "plot",
-                "token": "3g0rnbjMNMDod4n7"
-            }
-        },
-        {
-            "shape": {
-                "rows": "1",
-                "cols": "3"
+            {
+                "shape": {
+                    "rows": 1,
+                    "cols": 3
+                },
+                "renderer": "SensorMsgs_Range",
+                "title": "Time-of-Flight",
+                "subtitle": "/bottom_tof_driver_node/range",
+                "args": {
+                    "ros_hostname": "",
+                    "topic": "~/bottom_tof_driver_node/range",
+                    "fps": 5,
+                    "rendering": "number"
+                }
             },
-            "renderer": "SensorMsgs_Range",
-            "title": "Time-of-Flight",
-            "subtitle": "/bottom_tof_driver_node/range",
-            "args": {
-                "ros_hostname": "",
-                "topic": "~/bottom_tof_driver_node/range",
-                "fps": "5",
-                "rendering": "number",
-                "token": "3g0rnbjMNMDod4n7"
-            }
-        },
-        {
-            "shape": {
-                "rows": "2",
-                "cols": "8"
+            {
+                "shape": {
+                    "rows": 2,
+                    "cols": 8
+                },
+                "renderer": "SensorMsgs_IMU_Orientation",
+                "title": "IMU - Orientation",
+                "subtitle": "/flight_controller_node/imu",
+                "args": {
+                    "ros_hostname": "",
+                    "topic": "~/flight_controller_node/imu",
+                    "fps": 5
+                }
             },
-            "renderer": "SensorMsgs_IMU_Orientation",
-            "title": "IMU - Orientation",
-            "subtitle": "/flight_controller_node/imu",
-            "args": {
-                "ros_hostname": "",
-                "topic": "~/flight_controller_node/imu",
-                "fps": "5",
-                "token": "3g0rnbjMNMDod4n7"
+            {
+                "shape": {
+                    "rows": 4,
+                    "cols": 8
+                },
+                "renderer": "SensorMsgs_CompressedImage",
+                "title": "Camera",
+                "subtitle": "/camera_node/image/compressed",
+                "args": {
+                    "ros_hostname": "",
+                    "topic": "~/camera_node/image/compressed",
+                    "fps": 2,
+                    "position": "center center",
+                    "style": "cover",
+                    "background_color": ""
+                }
             }
-        },
-        {
-            "shape": {
-                "rows": 4,
-                "cols": 8
-            },
-            "renderer": "SensorMsgs_CompressedImage",
-            "title": "Camera",
-            "subtitle": "/camera_node/image/compressed",
-            "args": {
-                "ros_hostname": "",
-                "topic": "~/camera_node/image/compressed",
-                "fps": "5",
-                "position": "center center",
-                "style": "cover",
-                "background_color": "",
-                "token": "3g0rnbjMNMDod4n7"
-            }
-        }
-    ]
+        ]
+    }
 }
