@@ -1,3 +1,6 @@
+## 1.0.3 (July 07, 2022)
+  - bug fix in UI block Duckiedrone_Arming.php
+
 ## 1.0.2 (July 06, 2022)
   - added drone missions
 
