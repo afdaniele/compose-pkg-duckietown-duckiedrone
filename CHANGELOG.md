@@ -1,3 +1,6 @@
+## 1.0.4 (July 07, 2022)
+  - fixed bug with default mission specs file
+
 ## 1.0.3 (July 07, 2022)
   - bug fix in UI block Duckiedrone_Arming.php
 
