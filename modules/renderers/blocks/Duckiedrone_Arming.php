@@ -137,7 +137,7 @@ class Duckiedrone_Arming extends BlockRenderer {
                         // armed
                         $('#<?php echo $id ?> #drone_mode_toggle_trigger').bootstrapToggle('enable');
                         $('#<?php echo $id ?> #drone_mode_toggle_trigger').data("bs.toggle").on(true);
-                        $('#<?php echo $id ?> #drone_mode_toggle_precheck').bootstrapToggle('enable');
+                        $('#<?php echo $id ?> #drone_mode_toggle_precheck').bootstrapToggle('disable');
                         $('#<?php echo $id ?> #drone_mode_toggle_precheck').data("bs.toggle").on(true);
                     }
                 });
