@@ -1,3 +1,6 @@
+## 1.0.6 (July 09, 2022)
+  - updated duckiedrone default mission
+
 ## 1.0.5 (July 09, 2022)
   - integrated virtual joystick; added third "FLY" switch
 
