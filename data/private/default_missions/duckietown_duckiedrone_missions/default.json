@@ -55,6 +55,28 @@
                     "background_color": "#fff"
                 }
             },
+			{
+				"shape": {
+					"rows": 2,
+					"cols": 8
+				},
+				"renderer": "Duckiedrone_Control",
+				"title": "Remote Control",
+				"subtitle": "Control the drone using a virtual joystick",
+				"args": {
+					"ros_hostname": "",
+					"service_set_mode": "~/flight_controller_node\/set_mode",
+					"service_override_commands": "",
+					"param_override_prefix": "~/fly_commands_mux_node\/",
+					"topic_mode_current": "~/flight_controller_node\/mode\/current",
+					"topic_control": "~/fly_commands_mux_node\/manual",
+					"topic_commands": "~/flight_controller_node\/commands\/executed",
+					"frequency": 5,
+					"min_value": 1000,
+					"max_value": 2000,
+					"background_color": "#fff"
+				}
+			},
             {
                 "shape": {
                     "rows": 1,

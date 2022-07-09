@@ -1,6 +1,6 @@
 {
 	"_data": {
-		"draggable": 1,
+		"draggable": 0,
 		"show_header": 1,
 		"show_icon": 1,
 		"show_menu": 1,
