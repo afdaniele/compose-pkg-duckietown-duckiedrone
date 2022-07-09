@@ -1,3 +1,6 @@
+## 1.0.7 (July 09, 2022)
+  - updated default mission
+
 ## 1.0.6 (July 09, 2022)
   - updated duckiedrone default mission
 
