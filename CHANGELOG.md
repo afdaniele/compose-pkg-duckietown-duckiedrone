@@ -1,3 +1,6 @@
+## 1.0.5 (July 09, 2022)
+  - integrated virtual joystick; added third "FLY" switch
+
 ## 1.0.4 (July 07, 2022)
   - fixed bug with default mission specs file
 
