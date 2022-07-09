@@ -69,7 +69,7 @@
 					"service_override_commands": "",
 					"param_override_prefix": "~/fly_commands_mux_node\/",
 					"topic_mode_current": "~/flight_controller_node\/mode\/current",
-					"topic_control": "~/fly_commands_mux_node\/manual",
+					"topic_control": "~/fly_commands_mux_node\/commands\/manual",
 					"topic_commands": "~/flight_controller_node\/commands\/executed",
 					"frequency": 5,
 					"min_value": 1000,
@@ -104,6 +104,7 @@
                 "args": {
                     "ros_hostname": "",
                     "topic": "~/altitude_node/altitude",
+                    "reference": "~/pid_controller_node/desired/height",
                     "label": "Altitude",
                     "fps": 5,
                     "rendering": "plot"
