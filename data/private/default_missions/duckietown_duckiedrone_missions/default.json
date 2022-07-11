@@ -136,6 +136,7 @@
                 "args": {
                     "ros_hostname": "",
                     "topic": "~/flight_controller_node/imu",
+                    "service": "~/flight_controller_node/calibrate_imu",
                     "fps": 5
                 }
             },
