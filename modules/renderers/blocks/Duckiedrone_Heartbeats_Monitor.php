@@ -31,6 +31,12 @@ class Duckiedrone_Heartbeats_Monitor extends BlockRenderer {
             "mandatory" => False,
             "default" => null
         ],
+        "override1" => [
+            "name" => "Override ROS Param (1)",
+            "type" => "text",
+            "mandatory" => False,
+            "default" => null
+        ],
         "topic2" => [
             "name" => "ROS Topic (2)",
             "type" => "text",
@@ -39,6 +45,12 @@ class Duckiedrone_Heartbeats_Monitor extends BlockRenderer {
         ],
         "label2" => [
             "name" => "Heartbeat label (2)",
+            "type" => "text",
+            "mandatory" => False,
+            "default" => null
+        ],
+        "override2" => [
+            "name" => "Override ROS Param (2)",
             "type" => "text",
             "mandatory" => False,
             "default" => null
@@ -55,6 +67,12 @@ class Duckiedrone_Heartbeats_Monitor extends BlockRenderer {
             "mandatory" => False,
             "default" => null
         ],
+        "override3" => [
+            "name" => "Override ROS Param (3)",
+            "type" => "text",
+            "mandatory" => False,
+            "default" => null
+        ],
         "topic4" => [
             "name" => "ROS Topic (4)",
             "type" => "text",
@@ -63,6 +81,12 @@ class Duckiedrone_Heartbeats_Monitor extends BlockRenderer {
         ],
         "label4" => [
             "name" => "Heartbeat label (4)",
+            "type" => "text",
+            "mandatory" => False,
+            "default" => null
+        ],
+        "override4" => [
+            "name" => "Override ROS Param (4)",
             "type" => "text",
             "mandatory" => False,
             "default" => null
@@ -97,8 +121,8 @@ class Duckiedrone_Heartbeats_Monitor extends BlockRenderer {
                         if (is_null($args["topic{$i}"]) || strlen($args["topic{$i}"]) <= 0)
                             continue
                         ?>
-                        <td class="col-md-3 heartbeats-monitor-topic<?php echo $i ?>">
-                            <span class="glyphicon glyphicon-heart" aria-hidden="true"></span>
+                        <td class="col-md-3 heartbeats-monitor-heart<?php echo $i ?>">
+                            <span id="heartbeats-monitor-heart<?php echo $i ?>" class="glyphicon glyphicon-heart" aria-hidden="true"></span>
                         </td>
                     <?php
                     }
@@ -109,7 +133,7 @@ class Duckiedrone_Heartbeats_Monitor extends BlockRenderer {
                         if (is_null($args["topic{$i}"]) || strlen($args["topic{$i}"]) <= 0)
                             continue
                         ?>
-                        <td class="col-md-3 heartbeats-monitor-topic<?php echo $i ?>">
+                        <td class="col-md-3 heartbeats-monitor-heart<?php echo $i ?>">
                             <?php echo $args["label{$i}"] ?>
                         </td>
                     <?php
@@ -131,13 +155,14 @@ class Duckiedrone_Heartbeats_Monitor extends BlockRenderer {
         <script type="text/javascript">
             $(document).on("<?php echo $connected_evt ?>", function (evt) {
                 let _heartbeats = {};
+                let _heartbeats_override = {};
                 
                 <?php
                 for ($i = 1; $i <= 4; $i++) {
                     if (is_null($args["topic{$i}"]) || strlen($args["topic{$i}"]) <= 0)
                         continue
                     ?>
-                    _heartbeats['<?php echo "topic{$i}" ?>'] = 0.0;
+                    _heartbeats['<?php echo "heart{$i}" ?>'] = 0.0;
                     (new ROSLIB.Topic({
                         ros: window.ros['<?php echo $ros_hostname ?>'],
                         name: '<?php echo $args["topic{$i}"] ?>',
@@ -145,8 +170,21 @@ class Duckiedrone_Heartbeats_Monitor extends BlockRenderer {
                         queue_size: 1,
                         throttle_rate: <?php echo 1000 / $args['frequency'] ?>
                     })).subscribe(function (message) {
-                        _heartbeats['<?php echo "topic{$i}" ?>'] = seconds_since_epoch();
-                        _heartbeat_turn_to_color("<?php echo "topic{$i}" ?>", "green");
+                        _heartbeats['<?php echo "heart{$i}" ?>'] = seconds_since_epoch();
+                        _heartbeat_turn_to_color("<?php echo "heart{$i}" ?>", "green");
+                    });
+                    
+                    let <?php echo "heart{$i}" ?> = new ROSLIB.Param({
+                        ros: window.ros['<?php echo $ros_hostname ?>'],
+                        name: '<?php echo $args["override{$i}"] ?>',
+                    });
+                    <?php echo "heart{$i}" ?>.get((v) => {
+                        _heartbeats_override['<?php echo "heart{$i}" ?>'] = v;
+                    });
+                    
+                    $("#<?php echo $id ?> #heartbeats-monitor-<?php echo "heart{$i}" ?>").on("click", () => {
+                        _heartbeats_override['<?php echo "heart{$i}" ?>'] = !(_heartbeats_override['<?php echo "heart{$i}" ?>'] ?? true);
+                        <?php echo "heart{$i}" ?>.set(_heartbeats_override['<?php echo "heart{$i}" ?>']);
                     });
                     <?php
                 }
@@ -157,10 +195,14 @@ class Duckiedrone_Heartbeats_Monitor extends BlockRenderer {
                 }
                 
                 function _update_heartbeats_monitor(){
-                    for (let label in _heartbeats) {
-                        let t = _heartbeats[label];
+                    for (let heart in _heartbeats) {
+                        let t = _heartbeats[heart];
                         if (seconds_since_epoch() - t > <?php echo $args["threshold"] ?>) {
-                            _heartbeat_turn_to_color(label, "darkred");
+                            let color = "black";
+                            if (heart in _heartbeats_override) {
+                                color = (_heartbeats_override[heart])? "darkred" : "goldenrod";
+                            }
+                            _heartbeat_turn_to_color(heart, color);
                         }
                     }
                 }
