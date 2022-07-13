@@ -8,10 +8,10 @@
 		"show_properties": 1,
 		"show_dispose": 1,
 		"wide_mode": 0,
-		"resolution": "8",
-		"block_gutter": "10",
-		"block_border_thickness": "1",
-		"scale_factor": "1"
+		"resolution": 8,
+		"block_gutter": 10,
+		"block_border_thickness": 1,
+		"scale_factor": 1
 	},
 	"_metadata": [
 	]
