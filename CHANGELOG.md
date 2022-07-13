@@ -1,3 +1,6 @@
+## 1.0.10 (July 13, 2022)
+  - added heartbeat override
+
 ## 1.0.9 (July 13, 2022)
   - fixed bug in default mission databases
 
