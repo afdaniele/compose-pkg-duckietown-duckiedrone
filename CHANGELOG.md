@@ -1,3 +1,6 @@
+## 1.0.9 (July 13, 2022)
+  - fixed bug in default mission databases
+
 ## 1.0.8 (July 11, 2022)
   - added Calibrate IMU button service to default mission
 
