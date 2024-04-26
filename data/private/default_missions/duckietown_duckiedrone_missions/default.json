@@ -136,11 +136,12 @@
                 },
                 "renderer": "SensorMsgs_IMU_Orientation",
                 "title": "IMU - Orientation",
-                "subtitle": "/flight_controller_node/imu",
+                "subtitle": "/imu_node/data",
                 "args": {
                     "ros_hostname": "",
-                    "topic": "~/flight_controller_node/imu",
-                    "service": "~/flight_controller_node/calibrate_imu",
+                    "topic": "~/imu_node/data",
+                    "service_1": "~/flight_controller_node/calibrate_imu",
+                    "service_2": "~/flight_controller_node/zero_yaw",
                     "fps": 5
                 }
             },

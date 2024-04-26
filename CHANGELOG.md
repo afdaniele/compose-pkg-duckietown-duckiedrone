@@ -1,3 +1,6 @@
+## 1.0.11 (aprile 26, 2024)
+  - Updated imu display panel
+
 ## 1.0.10 (July 13, 2022)
   - added heartbeat override
 
