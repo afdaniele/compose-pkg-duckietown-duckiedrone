@@ -1,3 +1,6 @@
+## 1.0.12 (April 26, 2024)
+
+
 ## 1.0.11 (aprile 26, 2024)
   - Updated imu display panel
 
