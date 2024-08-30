@@ -4,14 +4,13 @@ use \system\classes\Core;
 use \system\classes\BlockRenderer;
 use \system\packages\ros\ROS;
 
+class Mavros_Arming extends BlockRenderer {
 
-class Duckiedrone_Arming extends BlockRenderer {
-    
     static protected $ICON = [
         "class" => "fa",
         "name" => "key"
     ];
-    
+
     static protected $ARGUMENTS = [
         "ros_hostname" => [
             "name" => "ROSbridge hostname",
@@ -19,15 +18,23 @@ class Duckiedrone_Arming extends BlockRenderer {
             "mandatory" => False,
             "default" => ""
         ],
-        "service" => [
-            "name" => "ROS Service (Set mode)",
+        "arming_service" => [
+            "name" => "Arming Service",
             "type" => "text",
-            "mandatory" => True
+            "mandatory" => True,
+            "default" => "/mavros/cmd/arming"
         ],
-        "topic" => [
-            "name" => "ROS Topic (Read mode)",
+        "set_mode_service" => [
+            "name" => "Set Mode Service",
             "type" => "text",
-            "mandatory" => True
+            "mandatory" => True,
+            "default" => "/mavros/set_mode"
+        ],
+        "state_topic" => [
+            "name" => "State Topic",
+            "type" => "text",
+            "mandatory" => True,
+            "default" => "/mavros/state"
         ],
         "frequency" => [
             "name" => "Frequency (Hz)",
@@ -42,7 +49,7 @@ class Duckiedrone_Arming extends BlockRenderer {
             "default" => "#fff"
         ]
     ];
-    
+
     protected static function render($id, &$args) {
         ?>
         <table class="resizable" style="height: 100%">
@@ -50,39 +57,26 @@ class Duckiedrone_Arming extends BlockRenderer {
                 <td class="col-md-4 text-right" style="padding-right: 0">
                     <input type="checkbox"
                            data-toggle="toggle"
-                           data-on="CLEAR"
+                           data-on="ARM"
                            data-onstyle="primary"
-                           data-off="PRE-CHECK"
+                           data-off="DISARM"
                            data-offstyle="warning"
                            data-class="fast"
                            data-size="small"
-                           name="drone_mode_toggle_precheck"
-                           id="drone_mode_toggle_precheck">
+                           name="drone_arming_toggle"
+                           id="drone_arming_toggle">
                 </td>
                 <td class="col-md-4 text-left">
                     <input type="checkbox"
                            data-toggle="toggle"
-                           data-on="ARMED"
+                           data-on="OFFBOARD"
                            data-onstyle="danger"
-                           data-off="&nbsp;DISARMED&nbsp;"
+                           data-off="&nbsp;STABILIZE&nbsp;"
                            data-offstyle="warning"
                            data-class="fast"
                            data-size="small"
-                           name="drone_mode_toggle_arm"
-                           id="drone_mode_toggle_arm"
-                           disabled>
-                </td>
-                <td class="col-md-4 text-left" style="padding-left: 0">
-                    <input type="checkbox"
-                           data-toggle="toggle"
-                           data-on="&nbsp;&nbsp;ESTOP&nbsp;&nbsp;"
-                           data-onstyle="danger"
-                           data-off="FLY"
-                           data-offstyle="danger"
-                           data-class="fast"
-                           data-size="small"
-                           name="drone_mode_toggle_fly"
-                           id="drone_mode_toggle_fly"
+                           name="drone_mode_toggle"
+                           id="drone_mode_toggle"
                            disabled>
                 </td>
             </tr>
@@ -98,92 +92,71 @@ class Duckiedrone_Arming extends BlockRenderer {
         <script src="<?php echo Core::getJSscriptURL('rosdb.js', 'ros') ?>"></script>
 
         <script type="text/javascript">
-            let _DRONE_MODE_DISARMED = 0;
-            let _DRONE_MODE_ARMED = 1;
-            let _DRONE_MODE_FLYING = 2;
+            let _MODE_STABILIZE = 'STABILIZE';
+            let _MODE_OFFBOARD = 'OFFBOARD';
             
             $(document).on("<?php echo $connected_evt ?>", function (evt) {
+                let arming_srv = new ROSLIB.Service({
+                    ros: window.ros['<?php echo $ros_hostname ?>'],
+                    name : '<?php echo $args['arming_service'] ?>',
+                    serviceType : 'mavros_msgs/CommandBool'
+                });
+
                 let set_mode_srv = new ROSLIB.Service({
                     ros: window.ros['<?php echo $ros_hostname ?>'],
-                    name : '<?php echo $args['service'] ?>',
-                    messageType : 'duckietown_msgs/SetDroneMode'
+                    name : '<?php echo $args['set_mode_service'] ?>',
+                    serviceType : 'mavros_msgs/SetMode'
                 });
-                
-                function set_mode(mode) {
-                    let request = new ROSLIB.ServiceRequest({mode: {mode: mode}});
-                    // send request
-                    set_mode_srv.callService(request, function(_) {});
-                    console.log("Set mode: {0}".format(mode));
+
+                function set_arming(arm) {
+                    let request = new ROSLIB.ServiceRequest({value: arm});
+                    arming_srv.callService(request, function(response) {
+                        console.log("Arming result: ", response.success);
+                    });
                 }
-            
-                $('#<?php echo $id ?> #drone_mode_toggle_precheck').change(function() {
+
+                function set_mode(mode) {
+                    let request = new ROSLIB.ServiceRequest({custom_mode: mode});
+                    set_mode_srv.callService(request, function(response) {
+                        console.log("Mode change result: ", response.mode_sent);
+                    });
+                }
+
+                $('#<?php echo $id ?> #drone_arming_toggle').change(function() {
                     let checked = $(this).prop('checked');
+                    set_arming(checked);
                     if (!checked) {
-                        $('#<?php echo $id ?> #drone_mode_toggle_arm').bootstrapToggle('disable');
+                        $('#<?php echo $id ?> #drone_mode_toggle').bootstrapToggle('disable');
                     } else {
-                        $('#<?php echo $id ?> #drone_mode_toggle_arm').bootstrapToggle('enable');
+                        $('#<?php echo $id ?> #drone_mode_toggle').bootstrapToggle('enable');
                     }
                 });
-                
-                $('#<?php echo $id ?> #drone_mode_toggle_arm').change(function() {
+
+                $('#<?php echo $id ?> #drone_mode_toggle').change(function() {
                     let checked = $(this).prop('checked');
-                    let mode = _DRONE_MODE_DISARMED;
-                    if (!checked) {
-                        $('#<?php echo $id ?> #drone_mode_toggle_precheck').bootstrapToggle('enable');
-                        $('#<?php echo $id ?> #drone_mode_toggle_precheck').bootstrapToggle('off');
-                    } else {
-                        $('#<?php echo $id ?> #drone_mode_toggle_precheck').bootstrapToggle('disable');
-                        mode = _DRONE_MODE_ARMED;
-                    }
-                    // arm/disarm drone
+                    let mode = checked ? _MODE_OFFBOARD : _MODE_STABILIZE;
                     set_mode(mode);
                 });
-                
-                $('#<?php echo $id ?> #drone_mode_toggle_fly').change(function() {
-                    let checked = $(this).prop('checked');
-                    if (!checked) {
-                        $('#<?php echo $id ?> #drone_mode_toggle_precheck').bootstrapToggle('enable');
-                        $('#<?php echo $id ?> #drone_mode_toggle_precheck').bootstrapToggle('off');
-                        $('#<?php echo $id ?> #drone_mode_toggle_arm').bootstrapToggle('enable');
-                        $('#<?php echo $id ?> #drone_mode_toggle_arm').bootstrapToggle('off');
-                        $('#<?php echo $id ?> #drone_mode_toggle_fly').bootstrapToggle('disable');
-                    } else {
-                        // set fly mode
-                        set_mode(_DRONE_MODE_FLYING);
-                    }
-                });
-                
+
                 (new ROSLIB.Topic({
                     ros: window.ros['<?php echo $ros_hostname ?>'],
-                    name: '<?php echo $args["topic"] ?>',
-                    messageType: 'duckietown_msgs/DroneMode',
+                    name: '<?php echo $args["state_topic"] ?>',
+                    messageType: 'mavros_msgs/State',
                     queue_size: 1,
                     throttle_rate: <?php echo 1000 / $args['frequency'] ?>
                 })).subscribe(function (message) {
-                    if (message.mode < _DRONE_MODE_ARMED) {
-                        // disarmed
-                        $('#<?php echo $id ?> #drone_mode_toggle_fly').data("bs.toggle").off(true);
-                        $('#<?php echo $id ?> #drone_mode_toggle_fly').bootstrapToggle('disable');
-                        $('#<?php echo $id ?> #drone_mode_toggle_arm').data("bs.toggle").off(true);
-                        $('#<?php echo $id ?> #drone_mode_toggle_arm').bootstrapToggle('disable');
-                        $('#<?php echo $id ?> #drone_mode_toggle_precheck').bootstrapToggle('enable');
-                        $('#<?php echo $id ?> #drone_mode_toggle_precheck').data("bs.toggle").off(true);
-                    } else if (message.mode == _DRONE_MODE_ARMED) {
-                        // armed
-                        $('#<?php echo $id ?> #drone_mode_toggle_fly').bootstrapToggle('enable');
-                        $('#<?php echo $id ?> #drone_mode_toggle_fly').data("bs.toggle").off(true);
-                        $('#<?php echo $id ?> #drone_mode_toggle_arm').bootstrapToggle('enable');
-                        $('#<?php echo $id ?> #drone_mode_toggle_arm').data("bs.toggle").on(true);
-                        $('#<?php echo $id ?> #drone_mode_toggle_precheck').bootstrapToggle('disable');
-                        $('#<?php echo $id ?> #drone_mode_toggle_precheck').data("bs.toggle").on(true);
-                    } else if (message.mode == _DRONE_MODE_FLYING) {
-                        // fly
-                        $('#<?php echo $id ?> #drone_mode_toggle_fly').bootstrapToggle('enable');
-                        $('#<?php echo $id ?> #drone_mode_toggle_fly').data("bs.toggle").on(true);
-                        $('#<?php echo $id ?> #drone_mode_toggle_arm').bootstrapToggle('enable');
-                        $('#<?php echo $id ?> #drone_mode_toggle_arm').data("bs.toggle").on(true);
-                        $('#<?php echo $id ?> #drone_mode_toggle_precheck').bootstrapToggle('disable');
-                        $('#<?php echo $id ?> #drone_mode_toggle_precheck').data("bs.toggle").on(true);
+                    if (!message.armed) {
+                        $('#<?php echo $id ?> #drone_mode_toggle').bootstrapToggle('disable');
+                        $('#<?php echo $id ?> #drone_arming_toggle').bootstrapToggle('off');
+                    } else {
+                        $('#<?php echo $id ?> #drone_mode_toggle').bootstrapToggle('enable');
+                        $('#<?php echo $id ?> #drone_arming_toggle').bootstrapToggle('on');
+                    }
+
+                    if (message.mode === _MODE_OFFBOARD) {
+                        $('#<?php echo $id ?> #drone_mode_toggle').bootstrapToggle('on');
+                    } else {
+                        $('#<?php echo $id ?> #drone_mode_toggle').bootstrapToggle('off');
                     }
                 });
             });
@@ -199,7 +172,6 @@ class Duckiedrone_Arming extends BlockRenderer {
             }
         </style>
         <?php
-    }//render
-    
-}//Duckiedrone_Arming
+    }
+}
 ?>
