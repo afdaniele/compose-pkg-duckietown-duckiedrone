@@ -1,3 +1,7 @@
+## 2.0.0 (September 17, 2024)
+  - Added devcontainer configuration
+  - Moved arming/mode widget to mavros
+
 ## 1.0.12 (April 26, 2024)
 
 
