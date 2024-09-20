@@ -86,7 +86,7 @@
                     "rows": 1,
                     "cols": 3
                 },
-                "renderer": "Duckiedrone_Arming",
+                "renderer": "Mavros_Arming",
                 "title": "Arm / Disarm",
                 "subtitle": "WARNING: This will activate the propellers",
                 "args": {

@@ -22,19 +22,19 @@ class Mavros_Arming extends BlockRenderer {
             "name" => "Arming Service",
             "type" => "text",
             "mandatory" => True,
-            "default" => "/mavros/cmd/arming"
+            "default" => "~/flight_controller_node/arm"
         ],
         "set_mode_service" => [
             "name" => "Set Mode Service",
             "type" => "text",
             "mandatory" => True,
-            "default" => "/mavros/set_mode"
+            "default" => "~/flight_controller_node/set_mode"
         ],
         "state_topic" => [
             "name" => "State Topic",
             "type" => "text",
             "mandatory" => True,
-            "default" => "/mavros/state"
+            "default" => "~/flight_controller_node/mode/current"
         ],
         "frequency" => [
             "name" => "Frequency (Hz)",
@@ -66,19 +66,6 @@ class Mavros_Arming extends BlockRenderer {
                            name="drone_arming_toggle"
                            id="drone_arming_toggle">
                 </td>
-                <td class="col-md-4 text-left">
-                    <input type="checkbox"
-                           data-toggle="toggle"
-                           data-on="OFFBOARD"
-                           data-onstyle="danger"
-                           data-off="&nbsp;STABILIZE&nbsp;"
-                           data-offstyle="warning"
-                           data-class="fast"
-                           data-size="small"
-                           name="drone_mode_toggle"
-                           id="drone_mode_toggle"
-                           disabled>
-                </td>
             </tr>
         </table>
         
@@ -95,6 +82,9 @@ class Mavros_Arming extends BlockRenderer {
             let _MODE_STABILIZE = 'STABILIZE';
             let _MODE_OFFBOARD = 'OFFBOARD';
             
+            // Track the success of the arming service call
+            let armingSuccess = false;
+
             $(document).on("<?php echo $connected_evt ?>", function (evt) {
                 let arming_srv = new ROSLIB.Service({
                     ros: window.ros['<?php echo $ros_hostname ?>'],
@@ -109,9 +99,13 @@ class Mavros_Arming extends BlockRenderer {
                 });
 
                 function set_arming(arm) {
-                    let request = new ROSLIB.ServiceRequest({value: arm});
+                    console.log("ros service hostname:", arming_srv.ros.hostname);
+                    console.log("Calling arming service: ", arming_srv.name);
+                    console.log("Setting arming to: ", arm);
+                    let request = new ROSLIB.ServiceRequest({value: arm}); // `arm` is the desired boolean value
                     arming_srv.callService(request, function(response) {
                         console.log("Arming result: ", response.success);
+                        armingSuccess = response.success;
                     });
                 }
 
@@ -122,22 +116,13 @@ class Mavros_Arming extends BlockRenderer {
                     });
                 }
 
-                $('#<?php echo $id ?> #drone_arming_toggle').change(function() {
+                $('#<?php echo $id ?> #drone_arming_toggle').off().change(function() {
                     let checked = $(this).prop('checked');
-                    set_arming(checked);
-                    if (!checked) {
-                        $('#<?php echo $id ?> #drone_mode_toggle').bootstrapToggle('disable');
-                    } else {
-                        $('#<?php echo $id ?> #drone_mode_toggle').bootstrapToggle('enable');
-                    }
+                    console.log("Arming toggle changed. Checked: ", checked);
+                    set_arming(checked);  // Trigger the arming service call
                 });
 
-                $('#<?php echo $id ?> #drone_mode_toggle').change(function() {
-                    let checked = $(this).prop('checked');
-                    let mode = checked ? _MODE_OFFBOARD : _MODE_STABILIZE;
-                    set_mode(mode);
-                });
-
+                // Subscribe to the State topic
                 (new ROSLIB.Topic({
                     ros: window.ros['<?php echo $ros_hostname ?>'],
                     name: '<?php echo $args["state_topic"] ?>',
@@ -145,22 +130,18 @@ class Mavros_Arming extends BlockRenderer {
                     queue_size: 1,
                     throttle_rate: <?php echo 1000 / $args['frequency'] ?>
                 })).subscribe(function (message) {
-                    if (!message.armed) {
-                        $('#<?php echo $id ?> #drone_mode_toggle').bootstrapToggle('disable');
-                        $('#<?php echo $id ?> #drone_arming_toggle').bootstrapToggle('off');
-                    } else {
-                        $('#<?php echo $id ?> #drone_mode_toggle').bootstrapToggle('enable');
+                    console.log("State topic message received. Armed:", message.armed);
+                    
+                    // Only update the toggle if both the service call was successful and the armed state is true
+                    if (armingSuccess && message.armed) {
                         $('#<?php echo $id ?> #drone_arming_toggle').bootstrapToggle('on');
-                    }
-
-                    if (message.mode === _MODE_OFFBOARD) {
-                        $('#<?php echo $id ?> #drone_mode_toggle').bootstrapToggle('on');
-                    } else {
-                        $('#<?php echo $id ?> #drone_mode_toggle').bootstrapToggle('off');
+                    } else if (!armingSuccess || !message.armed) {
+                        $('#<?php echo $id ?> #drone_arming_toggle').bootstrapToggle('off');
                     }
                 });
             });
         </script>
+
         
         <?php
         ROS::connect($ros_hostname);
