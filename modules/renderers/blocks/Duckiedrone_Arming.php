@@ -24,6 +24,12 @@ class Mavros_Arming extends BlockRenderer {
             "mandatory" => True,
             "default" => "~/flight_controller_node/arm"
         ],
+        "kill_switch" => [
+            "name" => "Kill Switch Service",
+            "type" => "text",
+            "mandatory" => True,
+            "default" => "~/mavros/cmd/command"
+        ],
         "set_mode_service" => [
             "name" => "Set Mode Service",
             "type" => "text",
@@ -92,6 +98,12 @@ class Mavros_Arming extends BlockRenderer {
                     serviceType : 'mavros_msgs/CommandBool'
                 });
 
+                let kill_switch_srv = new ROSLIB.Service({
+                    ros: window.ros['<?php echo $ros_hostname ?>'],
+                    name : '<?php echo $args['kill_switch'] ?>',
+                    serviceType : 'mavros/CommandLong'
+                });
+
                 let set_mode_srv = new ROSLIB.Service({
                     ros: window.ros['<?php echo $ros_hostname ?>'],
                     name : '<?php echo $args['set_mode_service'] ?>',
@@ -102,11 +114,34 @@ class Mavros_Arming extends BlockRenderer {
                     console.log("ros service hostname:", arming_srv.ros.hostname);
                     console.log("Calling arming service: ", arming_srv.name);
                     console.log("Setting arming to: ", arm);
-                    let request = new ROSLIB.ServiceRequest({value: arm}); // `arm` is the desired boolean value
-                    arming_srv.callService(request, function(response) {
-                        console.log("Arming result: ", response.success);
-                        armingSuccess = response.success;
-                    });
+                                        
+                    if (arm) {
+                        // Call the arming service
+                        let request = new ROSLIB.ServiceRequest({value: arm}); // `arm` is the desired boolean value
+                        arming_srv.callService(request, function(response) {
+                            console.log("Arming result: ", response.success);
+                            armingSuccess = response.success;
+                        });
+                    } else {
+                        // Call the kill switch service
+                        let request = new ROSLIB.ServiceRequest({
+                            broadcast: false,
+                            command: 400, // MAV_CMD_COMPONENT_ARM_DISARM
+                            confirmation: 0,
+                            param1: 0.0, // Disarm
+                            param2: 21196.0,
+                            param3: 0.0,
+                            param4: 0.0,
+                            param5: 0.0,
+                            param6: 0.0,
+                            param7: 0.0
+                        });
+                        kill_switch_srv.callService(request, function(response) {
+                            console.log("Kill switch result: ", response.success);
+                            armingSuccess = response.success;
+                        });
+                    }
+
                 }
 
                 function set_mode(mode) {
