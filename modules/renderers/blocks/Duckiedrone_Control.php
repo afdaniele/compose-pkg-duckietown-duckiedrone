@@ -356,11 +356,11 @@ class Duckiedrone_Control extends BlockRenderer {
                 (new ROSLIB.Topic({
                     ros: window.ros['<?php echo $ros_hostname ?>'],
                     name: '<?php echo $args["topic_mode_current"] ?>',
-                    messageType: 'duckietown_msgs/DroneMode',
+                    messageType: 'mavros_msgs/State',
                     queue_size: 1,
                     throttle_rate: <?php echo 1000 / $args['frequency'] ?>
                 })).subscribe(function (message) {
-                    armed = message.mode >= _DRONE_MODE_ARMED;
+                    armed = message.armed;
                 });
                 
                 // joystick commands publisher

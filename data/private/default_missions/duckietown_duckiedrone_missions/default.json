@@ -86,13 +86,14 @@
                     "rows": 1,
                     "cols": 3
                 },
-                "renderer": "Duckiedrone_Arming",
+                "renderer": "Mavros_Arming",
                 "title": "Arm / Disarm",
                 "subtitle": "WARNING: This will activate the propellers",
                 "args": {
                     "ros_hostname": "",
-                    "service": "~/flight_controller_node/set_mode",
-                    "topic": "~/flight_controller_node/mode/current",
+                    "kill_switch": "~/mavros\/cmd\/command",
+					"set_mode_service": "~/flight_controller_node\/set_mode",
+					"state_topic": "~/flight_controller_node\/mode\/current",
                     "frequency": 10,
                     "background_color": "#fff"
                 }
