@@ -1,3 +1,7 @@
+## 2.0.3 (October 03, 2024)
+  - Increased controll authority on roll and pitch
+  - Fixed arming service for kill switch
+
 ## 2.0.1 (October 03, 2024)
   - Merge pull request #3 from duckietown:DTSW-6251-implement-force-disarm-in-dashboard
   - Implemented kill switch service
