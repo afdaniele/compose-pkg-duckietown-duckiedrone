@@ -1,3 +1,8 @@
+## 2.0.1 (October 03, 2024)
+  - Merge pull request #3 from duckietown:DTSW-6251-implement-force-disarm-in-dashboard
+  - Implemented kill switch service
+  - Implemented disarm on mavros
+
 ## 2.0.0 (September 17, 2024)
   - Added devcontainer configuration
   - Moved arming/mode widget to mavros
