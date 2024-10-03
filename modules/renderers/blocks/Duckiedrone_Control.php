@@ -160,8 +160,8 @@ class Duckiedrone_Control extends BlockRenderer {
 
         <script type="text/javascript">
             const CONST_YAW_DELTA = 90;
-            const CONST_ROLL_DELTA = 45;
-            const CONST_PITCH_DELTA = 45;
+            const CONST_ROLL_DELTA = 90;
+            const CONST_PITCH_DELTA = 90;
             const CONST_MID_VAL = 1500;
             
             const CONST_JOY_YAW_DEADBAND = 20;
