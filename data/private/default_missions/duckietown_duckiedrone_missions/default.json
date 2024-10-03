@@ -92,6 +92,7 @@
                 "args": {
                     "ros_hostname": "",
                     "kill_switch": "~/mavros\/cmd\/command",
+                    "arming_service": "~/flight_controller_node\/arm",
 					"set_mode_service": "~/flight_controller_node\/set_mode",
 					"state_topic": "~/flight_controller_node\/mode\/current",
                     "frequency": 10,
